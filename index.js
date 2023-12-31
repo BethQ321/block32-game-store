@@ -109,22 +109,22 @@ app.post('/api/boardgames', async(req, res, next) => {
     }
 })
 
-//PUT (update) a game
-// app.put('/api/boardgames/:id', async(res, req, next) => {
-//     try {
-//         const SQL = `
-//             UPDATE boardgames
-//             SET name = $1, type = $2, bggrating = $3
-//             WHERE id = $4
-//             RETURNING *
-//         `
-//         const response = await client.query(SQL, [req.body.name, req.body.type, req.body.bggrating, req.params.id])
-//         res.send(response.rows)
-//     } catch (error) {
-//         next(error)
-//     }
-// })
+//POST a video game
+app.post('/api/videogames', async(req, res, next) => {
+    try {
+        let SQL = `
+            INSERT INTO videogames (name, type, ignrating) 
+            VALUES ($1, $2, $3)
+            RETURNING *
+        `
+        let response = await client.query(SQL, [req.body.name, req.body.type, req.body.ignrating])
+        res.send(response.rows[0])
+    } catch (error) {
+        next(error)
+    }
+})
 
+//PUT (update) individual board games
 app.put('/api/boardgames/:id', async (req, res, next) => {
     try {
         const SQL = `
@@ -134,6 +134,22 @@ app.put('/api/boardgames/:id', async (req, res, next) => {
             RETURNING *
         `
         const response = await client.query(SQL, [req.body.name, req.body.type, req.body.bggrating, req.params.id])
+        res.send(response.rows)
+    } catch (error) {
+        next(error)
+    }
+}) 
+
+//PUT (update) individual video games
+app.put('/api/videogames/:id', async (req, res, next) => {
+    try {
+        const SQL = `
+            UPDATE videogames
+            SET name = $1, type = $2, ignrating = $3
+            WHERE id = $4
+            RETURNING *
+        `
+        const response = await client.query(SQL, [req.body.name, req.body.type, req.body.ignrating, req.params.id])
         res.send(response.rows)
     } catch (error) {
         next(error)
@@ -152,7 +168,7 @@ const start = async() => {
             id SERIAL PRIMARY KEY,
             name VARCHAR(50),
             type VARCHAR(20),
-            ignRating DECIMAL
+            ignrating DECIMAL
         );
 
         CREATE TABLE boardgames(
@@ -162,10 +178,10 @@ const start = async() => {
             bggrating DECIMAL
         );
 
-        INSERT INTO videogames (name, type, ignRating) VALUES ('Mario Wonder', 'platform', 9);
-        INSERT INTO videogames (name, type, ignRating) VALUES ('Stardew Valley', 'role-playing', 9.5);
-        INSERT INTO videogames (name, type, ignRating) VALUES ('Animal Crossing', 'social simulation', 9);
-        INSERT INTO videogames (name, type, ignRating) VALUES ('Minecraft', 'sandbox', 9);
+        INSERT INTO videogames (name, type, ignrating) VALUES ('Mario Wonder', 'platform', 9);
+        INSERT INTO videogames (name, type, ignrating) VALUES ('Stardew Valley', 'role-playing', 9.5);
+        INSERT INTO videogames (name, type, ignrating) VALUES ('Animal Crossing', 'social simulation', 9);
+        INSERT INTO videogames (name, type, ignrating) VALUES ('Minecraft', 'sandbox', 9);
 
         INSERT INTO boardgames (name, type, bggrating) VALUES ('Azul', 'abstract strategy', 7.8);
         INSERT INTO boardgames (name, type, bggrating) VALUES ('Ticket to Ride', 'family', 7.4);
